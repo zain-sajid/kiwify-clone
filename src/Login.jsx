@@ -1,4 +1,64 @@
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+
 export default function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const [error, setError] = useState(null);
+
+  function validateEmail() {
+    //  check if email is empty
+    if (!email) {
+      setError({
+        field: 'email',
+        message: 'Esse campo é obrigatório',
+      });
+
+      return;
+    }
+    // validate email using regex
+    const re = /\S+@\S+\.\S+/;
+
+    if (!re.test(email)) {
+      setError({
+        field: 'email',
+        message: 'O e-mail deve ser válido',
+      });
+
+      return;
+    }
+  }
+
+  function validatePassword() {
+    //  check if email is empty
+    if (!password) {
+      setError({
+        field: 'password',
+        message: 'Esse campo é obrigatório',
+      });
+
+      return;
+    }
+
+    // validate password
+    if (password.length < 6) {
+      setError({
+        field: 'password',
+        message: 'A senha deve ter no mínimo 6 caracteres',
+      });
+
+      return;
+    }
+  }
+
+  function handleSubmission(e) {
+    e.preventDefault();
+
+    validatePassword();
+    validateEmail();
+  }
+
   return (
     <>
       <div className="flex min-h-screen bg-gray-50 flex-col justify-center items-center py-12">
@@ -13,14 +73,16 @@ export default function Login() {
           </h2>
           <p className="mt-2 text-center">
             Ou{' '}
-            <a className="font-medium text-indigo-600 hover:text-indigo-500">
-              fazer cadastro
-            </a>
+            <Link to="/signup">
+              <a className="font-medium text-indigo-600 hover:text-indigo-500">
+                fazer cadastro
+              </a>
+            </Link>
           </p>
         </div>
         <div className="mt-8 sm:mx-auto w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <form className="space-y-4" action="#" method="POST">
+            <form className="space-y-4" onSubmit={handleSubmission}>
               <div>
                 <label
                   htmlFor="email"
@@ -34,9 +96,20 @@ export default function Login() {
                     name="email"
                     type="email"
                     autoComplete="email"
-                    required
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 sm:text-sm sm:leading-6"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ${
+                      error?.field === 'email'
+                        ? 'ring-red-500'
+                        : 'ring-gray-300'
+                    } placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-300 sm:text-sm sm:leading-6`}
                   />
+
+                  {error?.field === 'email' && (
+                    <div className="text-red-500 text-xs mt-1">
+                      {error.message}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -53,9 +126,19 @@ export default function Login() {
                     name="password"
                     type="password"
                     autoComplete="current-password"
-                    required
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ${
+                      error?.field === 'password'
+                        ? 'ring-red-500'
+                        : 'ring-gray-300'
+                    } placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-300 sm:text-sm sm:leading-6`}
                   />
+                  {error?.field === 'password' && (
+                    <div className="text-red-500 text-xs mt-1">
+                      {error.message}
+                    </div>
+                  )}
                 </div>
               </div>
 
